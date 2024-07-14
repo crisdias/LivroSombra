@@ -41,7 +41,7 @@ Run the script with the Amazon book URL as a parameter:
     python sombra.py "<amazon_book_url>"
 
 Example:
-    python sombra.py "https://www.amazon.com.br/Ensaio-sobre-cancelamento-Pedro-Tourinho/dp/8542226658/ref=sr_1_2?crid=27KZGDZI5E40R&dib=eyJ2IjoiMSJ9.efL8-Ln4UoR5lSsljgKp9A.RdOn6XFA8oqetU_PxMYG5DQLJ1ZqXxyo8YhpSKGG2aY&dib_tag=se&keywords=ensaio+sobre+o+cancelamento+-+pedro+tourinho&qid=1720966138&sprefix=cancelamento+pedroCapsC217&sr=8-2"
+    python sombra.py "https://www.amazon.com.br/Ensaio-sobre-cancelamento-Pedro-Tourinho/dp/8542226658/"
 
 ## License
 
