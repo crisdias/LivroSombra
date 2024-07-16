@@ -92,8 +92,7 @@ def get_book_cover_image(url):
                     add_shadow_to_image(
                         book_cover_path, shadow_path, img_name_with_shadow)
                 else:
-                    print(f"Failed to download the image: {
-                          img_response.status_code}")
+                    print(f"Failed to download the image: {img_response.status_code}")
             else:
                 print("Failed to find the book cover image in the response.")
         else:
