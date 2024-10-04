@@ -33,8 +33,8 @@ def add_shadow_to_image(book_cover_path, shadow_path, output_path):
                 # Paste the shadow on the bottom of the new image
                 new_image.paste(shadow, (0, book_cover.height), mask=shadow)
 
-                # Save the final image as PNG
-                new_image.save(output_path, format='PNG')
+                # Save the final image as WebP
+                new_image.save(output_path, format='WebP', quality=85)
                 print(f"Image with shadow saved as {output_path}")
 
                 # Delete the original JPEG cover image
@@ -44,7 +44,7 @@ def add_shadow_to_image(book_cover_path, shadow_path, output_path):
         print(f"Failed to add shadow to image: {e}")
 
 
-def get_book_cover_image(url):
+def get_book_cover_image(url, add_shadow=True):
     access_key = os.getenv('AWS_ACCESS_KEY_ID')
     secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
     associate_tag = os.getenv('AWS_ASSOCIATE_TAG')
@@ -81,18 +81,28 @@ def get_book_cover_image(url):
                 img_response = requests.get(image_url)
                 if img_response.status_code == 200:
                     book_cover_path = f"{cleaned_title}.jpg"
-                    img_name_with_shadow = f"{cleaned_title}.png"
+                    img_name_with_shadow = f"{cleaned_title}.webp"
                     with open(book_cover_path, 'wb') as img_file:
                         img_file.write(img_response.content)
                     print(f"Image saved as {book_cover_path}")
 
-                    # Add shadow to the book cover image
-                    shadow_path = os.path.join(
-                        os.path.dirname(__file__), 'sombra.png')
-                    add_shadow_to_image(
-                        book_cover_path, shadow_path, img_name_with_shadow)
+                    if add_shadow:
+                        # Add shadow to the book cover image
+                        shadow_path = os.path.join(
+                            os.path.dirname(__file__), 'sombra.png')
+                        add_shadow_to_image(
+                            book_cover_path, shadow_path, img_name_with_shadow)
+                    else:
+                        # Save the image directly as WebP
+                        with Image.open(book_cover_path) as img:
+                            img.save(img_name_with_shadow,
+                                     format='WebP', quality=85)
+                        os.remove(book_cover_path)
+                        print(
+                            f"Image saved as {img_name_with_shadow} without shadow")
                 else:
-                    print(f"Failed to download the image: {img_response.status_code}")
+                    print(
+                        f"Failed to download the image: {img_response.status_code}")
             else:
                 print("Failed to find the book cover image in the response.")
         else:
@@ -104,9 +114,10 @@ def get_book_cover_image(url):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <amazon_book_url>")
+    if len(sys.argv) < 2:
+        print("Usage: python script.py <amazon_book_url> [--noshadow]")
         sys.exit(1)
 
     book_url = sys.argv[1]
-    get_book_cover_image(book_url)
+    add_shadow = '--noshadow' not in sys.argv
+    get_book_cover_image(book_url, add_shadow)
